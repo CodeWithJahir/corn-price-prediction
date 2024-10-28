@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Price Prediction</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+    <!-- Header Section -->
+    <header class="navbar">
+        <h1>Crop Price Prediction Project</h1>
+        <p>Using machine learning to predict future crop prices</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Project Overview -->
+        <section class="overview">
+            <h2>Project Overview</h2>
+            <p>This project predicts future crop prices based on historical data. Choose a state, year, and crop to see the predicted price for the next year.</p>
+        </section>
+
+        <!-- Crop Selection and Prediction -->
+        <section class="prediction">
+            <h2>Select State, Year, and Crop</h2>
+
+            <!-- State Selection -->
+            <div class="input-row">
+                <label for="state-select">Select State:</label>
+                <select id="state-select" class="input-field">
+                    <!-- States -->
+                    <option value="Alabama">State_ALABAMA</option>
+                    <option value="Arizona">State_ARIZONA</option>
+                    <option value="Arkansas">State_ARKANSAS</option>
+                    <option value="California">State_CALIFORNIA</option>
+                    <option value="Colorado">State_COLORADO</option>
+                    <option value="Connecticut">State_CONNECTICUT</option>
+                    <option value="Delaware">State_DELAWARE</option>
+                    <option value="Florida">State_FLORIDA</option>
+                    <option value="Georgia">State_GEORGIA</option>
+                    <option value="Idaho">State_IDAHO</option>
+                    <option value="Illinois">State_ILLINOIS</option>
+                    <option value="Indiana">State_INDIANA</option>
+                    <option value="Iowa">State_IOWA</option>
+                    <option value="Kansas">State_KANSAS</option>
+                    <option value="Kentucky">State_KENTUCKY</option>
+                    <option value="Louisiana">State_LOUISIANA</option>
+                    <option value="Maine">State_MAINE</option>
+                    <option value="Maryland">State_MARYLAND</option>
+                    <option value="Massachusetts">State_MASSACHUSETTS</option>
+                    <option value="Michigan">State_MICHIGAN</option>
+                    <option value="Minnesota">State_MINNESOTA</option>
+                    <option value="Mississippi">State_MISSISSIPPI</option>
+                    <option value="Missouri">State_MISSOURI</option>
+                    <option value="Montana">State_MONTANA</option>
+                    <option value="Nebraska">State_NEBRASKA</option>
+                    <option value="Nevada">State_NEVADA</option>
+                    <option value="New Hampshire">State_NEW HAMPSHIRE</option>
+                    <option value="New Jersey">State_NEW JERSEY</option>
+                    <option value="New Mexico">State_NEW MEXICO</option>
+                    <option value="New York">State_NEW YORK</option>
+                    <option value="North Carolina">State_NORTH CAROLINA</option>
+                    <option value="North Dakota">State_NORTH DAKOTA</option>
+                    <option value="Ohio">State_OHIO</option>
+                    <option value="Oklahoma">State_OKLAHOMA</option>
+                    <option value="Oregon">State_OREGON</option>
+                    <option value="Other States">State_OTHER STATES</option>
+                    <option value="Pennsylvania">State_PENNSYLVANIA</option>
+                    <option value="Rhode Island">State_RHODE ISLAND</option>
+                    <option value="South Carolina">State_SOUTH CAROLINA</option>
+                    <option value="South Dakota">State_SOUTH DAKOTA</option>
+                    <option value="Tennessee">State_TENNESSEE</option>
+                    <option value="Texas">State_TEXAS</option>
+                    <option value="Utah">State_UTAH</option>
+                    <option value="Vermont">State_VERMONT</option>
+                    <option value="Virginia">State_VIRGINIA</option>
+                    <option value="Washington">State_WASHINGTON</option>
+                    <option value="West Virginia">State_WEST VIRGINIA</option>
+                    <option value="Wisconsin">State_WISCONSIN</option>
+                    <option value="Wyoming">State_WYOMING</option>
+                </select>
+            </div>
+
+            <!-- Year Selection (1867-2020) -->
+            <div class="input-row">
+                <label for="year-select">Year (1867-2020):</label>
+                <input type="number" id="year-select" min="1867" max="2020" value="2009" class="input-field" />
+            </div>
+
+            <!-- Crop Selection -->
+            <div class="input-row">
+                <label for="crop-select">Crop:</label>
+                <select id="crop-select" class="input-field">
+                    <option value="corn">Data Item_CORN, GRAIN - ACRES HARVESTED</option>
+                    <option value="corn_production">Data Item_CORN, GRAIN - PRODUCTION, MEASURED IN BU</option>
+                    <option value="corn_silage_acres">Data Item_CORN, SILAGE - ACRES HARVESTED</option>
+                    <option value="corn_silage_yield">Data Item_CORN, SILAGE - YIELD, MEASURED IN TONS / ACRE</option>
+                </select>
+            </div>
+
+            <!-- Prediction Button -->
+            <div class="input-row">
+                <button id="predict-button" class="input-field">Predict Price</button>
+            </div>
+
+            <!-- Prediction Result -->
+            <div id="prediction-result">
+                <div class="result-row">
+                    <h1>Price:</h1>
+                    <p id="price-output">$0/ton</p>
+                </div>
+                <div class="accuracy-row">
+                    <h4 class="accuracy-text">Prediction Accuracy:</h4>
+                    <p id="accuracy-output">0.9681095446880339%</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>   @Crop Price Prediction Project &copy; 2024, All Rights Reserved</p>
+    </footer>
+
+    <script>
+        document.getElementById('predict-button').addEventListener('click', function() {
+            // Collect input values
+            const state = document.getElementById('state-select').value;
+            const year = document.getElementById('year-select').value;
+            const crop = document.getElementById('crop-select').value;
+
+            // Prepare data to send in the POST request
+            const data = {
+                state: state,
+                year: parseInt(year),
+                crop: crop
+            };
+
+            // Send a POST request to the Flask backend
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the prediction results
+                document.getElementById('price-output').textContent = data.predicted_price;
+                document.getElementById('accuracy-output').textContent = data.accuracy;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
